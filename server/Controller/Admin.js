@@ -11,11 +11,17 @@ const axios = require("axios");
 const moment = require("moment");
 const { sendErrorEmail } = require("../utils/Errormail");
 const uuid = require("uuid");
+const dotenv = require("dotenv");
+const path = require("path");
+
+dotenv.config({ path: path.join(__dirname, "..", "api", ".env") });
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
 const apiKey = process.env.BLAND_API_KEY;
+console.log(apiKey);
 
 exports.AdminLogin = async (req, res, next) => {
   const { email, password } = req.body;
@@ -110,10 +116,6 @@ exports.SingleCall = async (req, res, next) => {
         res
           .status(200)
           .send({ message: "Phone call dispatched", status: "success" });
-      } else {
-        res
-          .status(400)
-          .send({ message: "Error dispatching phone call", status: "error" });
       }
     })
     .catch((error) => {
