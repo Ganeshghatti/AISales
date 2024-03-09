@@ -9,9 +9,9 @@ const path = require("path");
 dotenv.config({ path: path.join(__dirname, "api", ".env") });
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cors());
 app.use(adminroutes);
 
 connectdatabase();

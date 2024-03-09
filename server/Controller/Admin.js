@@ -84,7 +84,7 @@ exports.GetAllVoices = async (req, res, next) => {
 };
 exports.SingleCall = async (req, res, next) => {
   console.log("Received data:", req.body);
-  // Parse the form values89
+ 
   const { phone_number, prompt, transfer_number, voice, max_duration } =
     req.body;
   const { country_code: countryCode, actual_phone_number: phoneNumber } =
