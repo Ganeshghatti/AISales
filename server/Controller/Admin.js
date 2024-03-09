@@ -15,6 +15,7 @@ const uuid = require("uuid");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+const apiKey = process.env.BLAND_API_KEY;
 
 exports.AdminLogin = async (req, res, next) => {
   const { email, password } = req.body;
@@ -76,6 +77,50 @@ exports.GetAllVoices = async (req, res, next) => {
   });
 };
 exports.SingleCall = async (req, res, next) => {
-  console.log(req.body)
-  //single call here
-}
+  console.log("Received data:", req.body);
+  // Parse the form values89
+  const { phone_number, prompt, transfer_number, voice, max_duration } =
+    req.body;
+  const { country_code: countryCode, actual_phone_number: phoneNumber } =
+    phone_number;
+  const {
+    country_code: transferCountryCode,
+    phone_number: transferPhoneNumber,
+  } = transfer_number;
+  const data = {
+    phone_number: countryCode + phoneNumber,
+    task: prompt,
+    voice_id: 1,
+    reduce_latency: false,
+    transfer_phone_number: transferCountryCode + transferPhoneNumber,
+  };
+
+  // Dispatch the phone call
+  axios
+    .post("https://api.bland.ai/call", data, {
+      headers: {
+        authorization: apiKey,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      const { status } = response.data;
+
+      if (status) {
+        res
+          .status(200)
+          .send({ message: "Phone call dispatched", status: "success" });
+      } else {
+        res
+          .status(400)
+          .send({ message: "Error dispatching phone call", status: "error" });
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+
+      res
+        .status(400)
+        .send({ message: "Error dispatching phone call", status: "error" });
+    });
+};
