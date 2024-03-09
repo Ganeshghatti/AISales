@@ -1,19 +1,30 @@
 const express = require("express");
-const connectdatabase = require("./config/database");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const adminroutes = require("./routes/Admin");
+const connectDatabase = require("./config/database");
+const adminRoutes = require("./routes/Admin");
 const dotenv = require("dotenv");
 const path = require("path");
 
 dotenv.config({ path: path.join(__dirname, "api", ".env") });
 const app = express();
 
+// Configure CORS middleware
+const corsOptions = {
+  origin: "http://localhost:5173",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // enable set cookie
+};
+app.use(cors(corsOptions));
+
+// Middleware
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cors());
-app.use(adminroutes);
 
-connectdatabase();
+// Routes
+app.use(adminRoutes);
+
+// Connect to database
+connectDatabase();
 
 module.exports = app;

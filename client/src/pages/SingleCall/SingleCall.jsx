@@ -43,10 +43,6 @@ export default function SingleCall() {
     },
     voices: [],
     voice: "",
-    from_number: {
-      country_code: "",
-      phone_number: "",
-    },
     max_duration: "",
   });
 
@@ -241,35 +237,6 @@ export default function SingleCall() {
               </Select>
             </FormControl>
           )}
-
-          <div className="flex justify-between">
-            <FormControl className="custom-width-30">
-              <InputLabel htmlFor="fromCountryCode">Country Code</InputLabel>
-              <Input
-                id="fromCountryCode"
-                value={formData.from_number.country_code}
-                onChange={(e) =>
-                  handleChange("from_number", {
-                    ...formData.from_number,
-                    country_code: e.target.value,
-                  })
-                }
-              />
-            </FormControl>
-            <FormControl className="w-3/5">
-              <InputLabel htmlFor="fromPhoneNumber">Phone Number</InputLabel>
-              <Input
-                id="fromPhoneNumber"
-                value={formData.from_number.phone_number}
-                onChange={(e) =>
-                  handleChange("from_number", {
-                    ...formData.from_number,
-                    phone_number: e.target.value,
-                  })
-                }
-              />
-            </FormControl>
-          </div>
 
           {/* Max Duration */}
           <TextField
