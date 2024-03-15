@@ -104,7 +104,7 @@ const Login = () => {
         className="flex pl-12 md:pl-6 absolute top-0 w-full py-4 items-center gap-6"
         style={{ height: "14vh", border: "1px solid #B0BBC9" }}
       >
-        <img src="./public/Assets/Images/logo2.png" alt="logo" />
+        <img src="./Assets/Images/logo2.png" alt="logo" />
         <p className="login-heading">Login</p>
       </div>
       <form
