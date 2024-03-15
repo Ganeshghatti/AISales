@@ -17,7 +17,7 @@ import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import "./Login.css";
+import "./Login.scss";
 import Spinnerf from "../../components/Spinnerf";
 import { Stack } from "@mui/material";
 import Alert from "@mui/material/Alert";
@@ -76,7 +76,7 @@ const Login = () => {
           token: response.data.token,
         })
       );
-      navigate(`/dashboard`);
+      navigate(`/single-call`);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -96,18 +96,30 @@ const Login = () => {
 
   return (
     <section
-      className="w-screen h-screen flex md:flex-col justify-center items-center gap-6"
+      className="w-screen h-screen flex md:flex-col justify-center items-center gap-3"
       id="login"
     >
       {loading && <Spinnerf />} <Stack spacing={2}>{alert}</Stack>
+      <div
+        className="flex pl-12 md:pl-6 absolute top-0 w-full py-4 items-center gap-6"
+        style={{ height: "14vh", border: "1px solid #B0BBC9" }}
+      >
+        <img src="./public/Assets/Images/logo2.png" alt="logo" />
+        <p className="login-heading">Login</p>
+      </div>
       <form
         onSubmit={handleAdminSubmit}
-        className="rounded md:w-11/12 w-1/3 p-12 flex flex-col gap-3 md:p-6"
+        className="rounded md:w-11/12 w-1/3 p-12 flex flex-col gap-4 md:p-6"
         style={{ backgroundColor: "white" }}
       >
-        <p className="text-black text-3xl font-semibold text-center">
-          ADMIN LOGIN
-        </p>
+        <img
+          src="./public/Assets/Images/logo.png"
+          alt=""
+          className="w-32 self-center md:w-24"
+        />
+        <label for="admin-email" className="login-label">
+          Email
+        </label>
         <TextField
           id="admin-email"
           variant="outlined"
@@ -119,6 +131,9 @@ const Login = () => {
           className="w-full rounded form-input"
           required
         />
+        <label for="admin-password" className="login-label">
+          Password
+        </label>
         <FormControl variant="outlined">
           <InputLabel htmlFor="admin-password">Password</InputLabel>
           <OutlinedInput
@@ -144,12 +159,7 @@ const Login = () => {
             label="Password"
           />
         </FormControl>
-        <button
-          type="submit"
-          className="bg-blue border-1 border-solid border-blue text-white rounded w-full py-3 hero-hover-animated-button"
-        >
-          Login
-        </button>
+        <button className="button-filled self-center mt-2">Login</button>
       </form>
     </section>
   );

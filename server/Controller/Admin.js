@@ -126,3 +126,8 @@ exports.SingleCall = async (req, res, next) => {
         .send({ message: "Error dispatching phone call", status: "error" });
     });
 };
+
+exports.BulkCall = async (req, res, next) => {
+  console.log(req.body)
+  res.status(200).json({message:"success"})
+} 

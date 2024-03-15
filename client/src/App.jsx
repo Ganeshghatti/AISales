@@ -16,14 +16,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route
-            path="/dashboard"
-            element={
-              <AdminProtectedRoute>
-                <Dashboard />
-              </AdminProtectedRoute>
-            }
-          />
-          <Route
             path="/single-call"
             element={
               <AdminProtectedRoute>

@@ -48,14 +48,6 @@ const LogoutButton = () => {
 };
 export const mainListItems = (
   <React.Fragment>
-        <Link to="/dashboard">
-      <ListItemButton>
-        <ListItemIcon>
-          <DashboardIcon />
-        </ListItemIcon>
-        <ListItemText primary="Dashboard" />
-      </ListItemButton>
-    </Link>{" "}
     <Link to="/single-call">
       <ListItemButton>
         <ListItemIcon>
@@ -72,7 +64,6 @@ export const mainListItems = (
         <ListItemText primary="Bulk Call" />
       </ListItemButton>
     </Link>{" "}
-
   </React.Fragment>
 );
 
