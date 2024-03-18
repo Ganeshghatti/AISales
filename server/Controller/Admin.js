@@ -189,3 +189,29 @@ exports.BulkCall = async (req, res, next) => {
 };
 
 
+exports.GetCallLogs = async (req, res) => {
+    try {
+        const apiKey = process.env.BLAND_API_KEY; // Ensure your API key is stored securely
+        console.log("Fetching call logs with API Key:", apiKey); // Debug statement for logging
+
+        const response = await axios.get('https://api.bland.ai/v1/calls', {
+            headers: { 'Authorization': apiKey }
+        });
+
+        console.log("Received response from API:", response.status); // Debug statement for logging response status
+
+        if (response.status === 200) {
+            // Optionally, log the response data or part of it for debugging
+            console.log("Call logs data:", response.data); // Be mindful of logging sensitive information
+
+            // Directly pass the response data to the frontend
+            res.status(200).json(response.data);
+        } else {
+            // Handle unexpected responses
+            res.status(response.status).json({ message: "Failed to fetch call logs" });
+        }
+    } catch (error) {
+        console.error("Error fetching call logs:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
