@@ -22,7 +22,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const apiKey = process.env.BLAND_API_KEY;
-console.log(apiKey);
 
 exports.AdminLogin = async (req, res, next) => {
   const { email, password } = req.body;
@@ -134,14 +133,20 @@ exports.SingleCall = async (req, res, next) => {
 
 exports.BulkCall = async (req, res, next) => {
   try {
-    const { prompt, transfer_number, voice, max_duration, phone_numbers } =
-      req.body;
+    const {
+      prompt,
+      transfer_number,
+      voice,
+      max_duration,
+      phone_numbers,
+      from_number,
+    } = req.body;
     const {
       country_code: transferCountryCode,
       phone_number: transferPhoneNumber,
     } = transfer_number;
 
-	if (!phone_numbers || phone_numbers.length === 0) {
+    if (!phone_numbers || phone_numbers.length === 0) {
       console.log("Phone numbers are missing"); // Debug statement
       return res
         .status(400)
@@ -175,7 +180,7 @@ exports.BulkCall = async (req, res, next) => {
           processedPhoneNumbers.add(phoneNumber.actual_phone_number); // Add the phone number to the processed set
           return {
             phone_number:
-              phoneNumber.country_code + phoneNumber.actual_phone_number, // Add country code to the phone number
+              "+" + phoneNumber.country_code + phoneNumber.actual_phone_number, // Add country code to the phone number
             task: prompt,
             voice_id: voice,
             reduce_latency: false,
