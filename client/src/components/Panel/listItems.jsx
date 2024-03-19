@@ -63,7 +63,16 @@ export const mainListItems = (
         </ListItemIcon>
         <ListItemText primary="Bulk Call" />
       </ListItemButton>
-    </Link>{" "}
+    </Link>
+    <Link to="/call-logs">
+      <ListItemButton>
+        <ListItemIcon>
+          <CallIcon />
+        </ListItemIcon>
+        <ListItemText primary="Call Logs" />
+      </ListItemButton>
+    </Link>
+    
   </React.Fragment>
 );
 
