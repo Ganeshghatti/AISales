@@ -64,7 +64,7 @@ export const mainListItems = (
         <ListItemText primary="Bulk Call" />
       </ListItemButton>
     </Link>
-    <Link to="/call-logs">
+    <Link to="/call-log">
       <ListItemButton>
         <ListItemIcon>
           <CallIcon />

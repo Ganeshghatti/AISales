@@ -41,3 +41,16 @@
 .border-test {
   border: 1px solid red;
 }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+.css-1191obr-MuiPaper-root-MuiAppBar-root {
+  background-color: white !important;
+  box-shadow: none !important;
+  border: 1px solid  #B0BBC9;
+}

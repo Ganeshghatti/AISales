@@ -8,6 +8,7 @@ import PageNotFound from "./components/PageNotFound";
 import { persistedStore } from "./app/store.js";
 import SingleCall from "./pages/SingleCall/SingleCall.jsx";
 import BulkCall from "./pages/BulkCall/BulkCall.jsx";
+import CallLog from "./pages/CallLog/CallLog.jsx";
 
 export default function App() {
   return (
@@ -28,6 +29,14 @@ export default function App() {
             element={
               <AdminProtectedRoute>
                 <BulkCall />
+              </AdminProtectedRoute>
+            }
+          />{" "}
+          <Route
+            path="/call-log"
+            element={
+              <AdminProtectedRoute>
+                <CallLog />
               </AdminProtectedRoute>
             }
           />

@@ -14,17 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Spinnerf from "../../components/Spinnerf";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Avatar from "@mui/joy/Avatar";
-import {
-  TextField,
-  TextareaAutosize,
-  Select,
-  MenuItem,
-  Button,
-  FormControl,
-  InputLabel,
-  Input,
-  FormHelperText,
-} from "@mui/material";
+import { FormControl, FormHelperText } from "@mui/material";
 import { REACT_APP_BACK_URL } from "../../config/config";
 
 export default function SingleCall() {
@@ -70,7 +60,7 @@ export default function SingleCall() {
           setLoading(false);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
         if (error.response && error.response.status === 401) {
           setLoading(false);
           return navigate(`/`);
@@ -144,146 +134,176 @@ export default function SingleCall() {
   };
   return (
     <div id="SingleCall" className="SingleCall flex">
-      <Panel tab="Single Call" />
+      <Panel />
       <Stack spacing={2}>{alert}</Stack>
-      <div
-        className="flex flex-wrap md:flex-col justify-center gap-8 w-3/4 h-full md:items-center"
-        style={{ marginLeft: "1vw", marginTop: "10vh" }}
-      >
-        <form className="flex flex-col gap-12 w-full">
-          <div className="flex justify-between">
-            <FormControl className="custom-width-30">
-              <InputLabel htmlFor="countryCode">Country Code</InputLabel>
-              <Input
-                id="countryCode"
-                value={formData.phone_number.country_code}
-                onChange={(e) =>
-                  handleChange("phone_number", {
-                    ...formData.phone_number,
-                    country_code: e.target.value,
-                  })
-                }
-              />
-            </FormControl>
-            <FormControl className="w-3/5">
-              <InputLabel htmlFor="actualPhoneNumber">
+      <div className="flex flex-col gap-2 flex-1">
+        <div
+          className="flex h-24 w-full py-4 px-6"
+          style={{ borderBottom: "1px solid #B0BBC9" }}
+        >
+          <img
+            src="/public\Assets\Images\logo3.png"
+            className="object-contain"
+            alt=""
+          />
+        </div>
+        <div className="flex flex-col justify-center gap-8 w-3/4 md:items-center p-6">
+          <h1 className="SingleCall-title">Send a Phone Call</h1>
+          <form className="flex flex-col gap-12 w-full" onSubmit={handleSubmit}>
+            <div className="w-full flex flex-col gap-2">
+              <label htmlFor="countryCode" className="SingleCall-label">
                 To Phone Number
-              </InputLabel>
-              <Input
-                id="actualPhoneNumber"
-                value={formData.phone_number.actual_phone_number}
-                onChange={(e) =>
-                  handleChange("phone_number", {
-                    ...formData.phone_number,
-                    actual_phone_number: e.target.value,
-                  })
-                }
+              </label>
+              <div className="flex gap-6 md:gap-0 md:justify-between">
+                <input
+                  type="number"
+                  id="actualPhoneNumber"
+                  value={formData.phone_number.country_code}
+                  className="SingleCall-input w-1/5"
+                  placeholder="Ex: +91"
+                  onChange={(e) =>
+                    handleChange("phone_number", {
+                      ...formData.phone_number,
+                      country_code: e.target.value,
+                    })
+                  }
+                />
+                <input
+                  type="number"
+                  id="actualPhoneNumber"
+                  placeholder="Ex: 9999999999"
+                  className="SingleCall-input w-2/5 md:w-3/4"
+                  value={formData.phone_number.actual_phone_number}
+                  onChange={(e) =>
+                    handleChange("phone_number", {
+                      ...formData.phone_number,
+                      actual_phone_number: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Prompt */}
+            <textarea
+              rows={3}
+              className="SingleCall-input"
+              placeholder="Fill Prompt in Detail"
+              value={formData.prompt}
+              onChange={(e) => handleChange("prompt", e.target.value)}
+            />
+
+            <div className="w-full flex flex-col gap-2">
+              <label htmlFor="transferPhoneNumber" className="SingleCall-label">
+                Transfer Number
+              </label>{" "}
+              <div className="flex w-full gap-6 md:gap-0 md:justify-between">
+                <input
+                  type="number"
+                  id="transferCountryCode"
+                  className="SingleCall-input w-1/5"
+                  placeholder="Ex: +91"
+                  value={formData.transfer_number.country_code}
+                  onChange={(e) =>
+                    handleChange("transfer_number", {
+                      ...formData.transfer_number,
+                      country_code: e.target.value,
+                    })
+                  }
+                />
+                <input
+                  type="number"
+                  id="transferPhoneNumber"
+                  className="SingleCall-input w-2/5 md:w-3/4"
+                  placeholder="Ex: 9999999999"
+                  value={formData.transfer_number.phone_number}
+                  onChange={(e) =>
+                    handleChange("transfer_number", {
+                      ...formData.transfer_number,
+                      phone_number: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Voice Dropdown */}
+            {formData.voices.length > 0 && (
+              <div className="flex flex-col gap-2 w-1/5 md:w-full">
+                <label htmlFor="voice" className="SingleCall-label">
+                  Voice
+                </label>
+                <select
+                  id="voice"
+                  value={formData.voice}
+                  className="SingleCall-input cursor-pointer"
+                  onChange={(e) => handleChange("voice", e.target.value)}
+                >
+                  {formData.voices.map((voice) => (
+                    <option key={voice.voice_id} value={voice.voice_id}>
+                      {voice.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="w-full flex flex-col gap-2">
+              <label htmlFor="fromPhoneNumber" className="SingleCall-label">
+                From Phone Number
+              </label>{" "}
+              <div className="flex w-full gap-6 md:gap-0 md:justify-between">
+                <input
+                  type="number"
+                  id="fromCountryCode"
+                  className="SingleCall-input w-1/5"
+                  placeholder="Ex: +91"
+                  value={formData.from_number.country_code}
+                  onChange={(e) =>
+                    handleChange("from_number", {
+                      ...formData.from_number,
+                      country_code: e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  type="number"
+                  id="fromPhoneNumber"
+                  className="SingleCall-input w-2/5 md:w-3/4"
+                  placeholder="Ex: 9999999999"
+                  value={formData.from_number.phone_number}
+                  onChange={(e) =>
+                    handleChange("from_number", {
+                      ...formData.from_number,
+                      phone_number: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Max Duration */}
+            <div className="flex flex-col gap-2 w-1/5 md:w-full">
+              <label htmlFor="maxDuration" className="SingleCall-label">
+                Max Duration (minutes)
+              </label>
+              <input
+                type="number"
+                id="maxDuration"
+                placeholder="Ex: 2"
+                className="SingleCall-input"
+                value={formData.max_duration}
+                onChange={(e) => handleChange("max_duration", e.target.value)}
               />
-            </FormControl>
-          </div>
+            </div>
 
-          {/* Prompt */}
-          <TextareaAutosize
-            className="w-full border-2 border-solid border-gray2 border-opacity-50 rounded p-2"
-            minRows={3}
-            placeholder="Fill Prompt in Detail"
-            value={formData.prompt}
-            onChange={(e) => handleChange("prompt", e.target.value)}
-          />
-
-          <div className="flex justify-between">
-            <FormControl className="custom-width-30">
-              <InputLabel htmlFor="transferCountryCode">
-                Country Code
-              </InputLabel>
-              <Input
-                id="transferCountryCode"
-                value={formData.transfer_number.country_code}
-                onChange={(e) =>
-                  handleChange("transfer_number", {
-                    ...formData.transfer_number,
-                    country_code: e.target.value,
-                  })
-                }
-              />
-            </FormControl>
-            <FormControl className="w-3/5">
-              <InputLabel htmlFor="transferPhoneNumber">
-                Phone Number
-              </InputLabel>
-              <Input
-                id="transferPhoneNumber"
-                value={formData.transfer_number.phone_number}
-                onChange={(e) =>
-                  handleChange("transfer_number", {
-                    ...formData.transfer_number,
-                    phone_number: e.target.value,
-                  })
-                }
-              />
-            </FormControl>
-          </div>
-
-          {/* Voice Dropdown */}
-          {formData.voices.length > 0 && (
-            <FormControl>
-              <InputLabel htmlFor="voice">Voice</InputLabel>
-              <Select
-                id="voice"
-                value={formData.voice}
-                onChange={(e) => handleChange("voice", e.target.value)}
-              >
-                {formData.voices.map((voice) => (
-                  <MenuItem key={voice.voice_id} value={voice.voice_id}>
-                    {voice.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-
-          <div className="flex justify-between">
-            <FormControl className="custom-width-30">
-              <InputLabel htmlFor="fromCountryCode">Country Code</InputLabel>
-              <Input
-                id="fromCountryCode"
-                value={formData.from_number.country_code}
-                onChange={(e) =>
-                  handleChange("from_number", {
-                    ...formData.from_number,
-                    country_code: e.target.value,
-                  })
-                }
-              />
-            </FormControl>
-            <FormControl className="w-3/5">
-              <InputLabel htmlFor="fromPhoneNumber">Phone Number</InputLabel>
-              <Input
-                id="fromPhoneNumber"
-                value={formData.from_number.phone_number}
-                onChange={(e) =>
-                  handleChange("from_number", {
-                    ...formData.from_number,
-                    phone_number: e.target.value,
-                  })
-                }
-              />
-            </FormControl>
-          </div>
-
-          {/* Max Duration */}
-          <TextField
-            label="Max Duration (minutes)"
-            type="number"
-            value={formData.max_duration}
-            onChange={(e) => handleChange("max_duration", e.target.value)}
-          />
-
-          {/* Submit Button */}
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
-        </form>
+            {/* Submit Button */}
+            <button onClick={handleSubmit} className="button-filled">
+              Call
+            </button>
+          </form>
+        </div>{" "}
       </div>
     </div>
   );
