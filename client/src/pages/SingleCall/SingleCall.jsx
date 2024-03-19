@@ -138,7 +138,7 @@ export default function SingleCall() {
       <Stack spacing={2}>{alert}</Stack>
       <div className="flex flex-col gap-2 flex-1">
         <div
-          className="flex h-24 w-full py-4 px-6"
+          className="flex h-24 w-full py-4 px-6 md:hidden"
           style={{ borderBottom: "1px solid #B0BBC9" }}
         >
           <img
@@ -147,9 +147,9 @@ export default function SingleCall() {
             alt=""
           />
         </div>
-        <div className="flex flex-col justify-center gap-8 w-3/4 md:items-center p-6">
-          <h1 className="SingleCall-title">Send a Phone Call</h1>
-          <form className="flex flex-col gap-12 w-full" onSubmit={handleSubmit}>
+        <div className="flex flex-col justify-center gap-8 w-3/4 md:w-full md:items-center md:mt-24 p-6">
+          <h1 className="SingleCall-title md:text-center">Send a Phone Call</h1>
+          <form className="flex flex-col gap-12 w-full md:items-center" onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-2">
               <label htmlFor="countryCode" className="SingleCall-label">
                 To Phone Number
@@ -187,7 +187,7 @@ export default function SingleCall() {
             {/* Prompt */}
             <textarea
               rows={3}
-              className="SingleCall-input"
+              className="SingleCall-input md:w-full"
               placeholder="Fill Prompt in Detail"
               value={formData.prompt}
               onChange={(e) => handleChange("prompt", e.target.value)}

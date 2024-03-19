@@ -198,7 +198,7 @@ export default function BulkCall() {
       <Stack spacing={2}>{alert}</Stack>
       <div className="flex flex-col gap-2 flex-1">
         <div
-          className="flex h-24 w-full py-4 px-6"
+          className="flex h-24 w-full py-4 px-6 md:hidden"
           style={{ borderBottom: "1px solid #B0BBC9" }}
         >
           <img
@@ -207,11 +207,11 @@ export default function BulkCall() {
             alt=""
           />
         </div>
-        <div className="flex flex-col justify-center gap-8 w-3/4 md:items-center p-6">
-          <h1 className="BulkCall-title">Bulk Call</h1>
+        <div className="flex flex-col justify-center gap-8 w-3/4 md:w-full md:items-center md:mt-24 p-6">
+          <h1 className="BulkCall-title md:text-center">Bulk Call</h1>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-12 w-full">
-            <div className="flex flex-col gap-2">
+          <form className="flex flex-col gap-12 w-full md:items-center" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-2 md:w-full">
               <label htmlFor="csvFile" className="BulkCall-label">
                 Upload CSV File:
               </label>
@@ -244,7 +244,7 @@ export default function BulkCall() {
             </div>
             <textarea
               rows={3}
-              className="BulkCall-input"
+              className="BulkCall-input md:w-full"
               placeholder="Fill Prompt in Detail"
               value={formData.prompt}
               onChange={(e) => handleChange("prompt", e.target.value)} // Changed handleChange function

@@ -96,7 +96,7 @@ export default function CallLog() {
       <Panel /> <Stack spacing={2}>{alert}</Stack>
       <div className="flex flex-col gap-2 flex-1">
         <div
-          className="flex h-24 w-full py-4 px-6"
+          className="flex h-24 w-full py-4 px-6 md:hidden"
           style={{ borderBottom: "1px solid #B0BBC9" }}
         >
           <img
@@ -105,7 +105,7 @@ export default function CallLog() {
             alt=""
           />
         </div>
-        <div className="flex flex-col justify-center gap-8 w-3/4 md:items-center p-6">
+        <div className="flex flex-col justify-center gap-8 w-3/4 md:w-11/12 md:items-center p-6">
           <h1 className="CallLog-title">Call Log</h1>
           {callLog && callLog.length > 0 ? (
             <TableContainer component={Paper}>

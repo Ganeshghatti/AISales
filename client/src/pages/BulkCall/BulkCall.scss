@@ -45,7 +45,8 @@
   font-weight: 600;
   line-height: normal;
   @media (max-width: 867px) {
-    width: 85%;
+    width: 100%;
+    z-index: -1;
   }
 }
 
