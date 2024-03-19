@@ -193,10 +193,9 @@ exports.GetCallLogs = async (req, res) => {
     try {
         const apiKey = process.env.BLAND_API_KEY; // Ensure your API key is stored securely
         console.log("Fetching call logs with API Key:", apiKey); // Debug statement for logging
+		const options = {method: 'GET', headers: {authorization: apiKey}};
 
-        const response = await axios.get('https://api.bland.ai/v1/calls', {
-            headers: { 'Authorization': apiKey }
-        });
+        const response = await axios.get('https://api.bland.ai/v1/calls', options);
 
         console.log("Received response from API:", response.status); // Debug statement for logging response status
 
