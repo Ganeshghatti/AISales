@@ -36,6 +36,11 @@ import {
   InputLabel,
   Input,
   FormHelperText,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import Papa from "papaparse";
 import Table from "@mui/material/Table";
@@ -51,6 +56,36 @@ export default function CallLog() {
   const admin = useSelector((state) => state.admin.admin);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
+  const [transcriptDialogOpen, setTranscriptDialogOpen] = useState(false);
+  const [transcript, setTranscript] = useState("");
+
+  const handleTranscriptDialogOpen = () => {
+    setTranscriptDialogOpen(true);
+  };
+
+  const handleTranscriptDialogClose = () => {
+    setTranscriptDialogOpen(false);
+  };
+
+  const handleViewTranscript = async (callId) => {
+    console.log(`Attempting to fetch transcript for call ID: ${callId}`); // Debug statement
+    try {
+      const response = await axios.get(
+        `${REACT_APP_BACK_URL}/admin/get-transcript/${callId}`, // Ensure this URL matches the endpoint exactly
+        {
+          headers: {
+            Authorization: `Bearer ${admin.token}`,
+          },
+        }
+      );
+      console.log("Transcript fetch response data:", response.data); // Debug statement
+      setTranscript(response.data.transcripts); // Adjust based on actual response structure
+      handleTranscriptDialogOpen();
+    } catch (error) {
+      console.log("Error fetching transcript:", error); // Debug statement
+      // Adjust error handling as necessary
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,9 +126,11 @@ export default function CallLog() {
 
     fetchData();
   }, [admin]);
+
   return (
     <div id="CallLog" className="CallLog flex">
-      <Panel /> <Stack spacing={2}>{alert}</Stack>
+      <Panel />
+      <Stack spacing={2}>{alert}</Stack>
       <div className="flex flex-col gap-2 flex-1">
         <div
           className="flex h-24 w-full py-4 px-6 md:hidden"
@@ -117,6 +154,9 @@ export default function CallLog() {
                     <TableCell align="right">Call Length</TableCell>
                     <TableCell align="right">Status</TableCell>
                     <TableCell align="right">Call from</TableCell>
+                    <TableCell align="right">Call ID</TableCell>
+                    <TableCell align="right">Transcript</TableCell>
+                    <TableCell align="right">Summary</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -132,6 +172,23 @@ export default function CallLog() {
                       <TableCell align="right">{call.call_length}</TableCell>
                       <TableCell align="right">{call.queue_status}</TableCell>
                       <TableCell align="right">{call.from}</TableCell>
+                      <TableCell align="right">{call.call_id}</TableCell>
+                      <TableCell align="right">
+                        <Button
+                          variant="contained"
+                          onClick={() => handleViewTranscript(call.call_id)}
+                        >
+                          View Transcript
+                        </Button>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Button
+                          variant="contained"
+                          onClick={() => handleViewSummary(call.call_id)}
+                        >
+                          View Summary
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -142,6 +199,38 @@ export default function CallLog() {
           )}
         </div>
       </div>
+      <Dialog
+        open={transcriptDialogOpen}
+        onClose={handleTranscriptDialogClose}
+        aria-labelledby="transcript-dialog-title"
+        aria-describedby="transcript-dialog-description"
+      >
+        <DialogTitle id="transcript-dialog-title">Transcript</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="transcript-dialog-description">
+            {transcript && Array.isArray(transcript) ? (
+              transcript.map((item, index) => (
+                <div key={index}>
+                  <strong>
+                    {item.user === "user" ? "User: " : "Assistant: "}
+                  </strong>
+                  {item.text}
+                </div>
+              ))
+            ) : (
+              <div>
+                <strong>
+                  {transcript.user === "user" ? "User: " : "Assistant: "}
+                </strong>
+                {transcript.text}
+              </div>
+            )}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleTranscriptDialogClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

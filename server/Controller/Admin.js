@@ -215,29 +215,62 @@ exports.BulkCall = async (req, res, next) => {
 };
 
 exports.GetCallLogs = async (req, res) => {
+	try {
+	  console.log("Fetching call logs with API Key:", apiKey);
+	  const options = { method: "GET", headers: { authorization: apiKey } };
+	  const response = await axios.get("https://api.bland.ai/v1/calls", options);
+  
+	  console.log("Received response from API:", response.status);
+  
+	  if (response.status === 200) {
+		console.log("Call logs data:", response.data);
+		res.status(200).json(response.data);
+	  } else {
+		res.status(response.status).json({ message: "Failed to fetch call logs" });
+	  }
+	} catch (error) {
+	  console.error("Error fetching call logs:", error);
+	  res.status(500).json({ message: "Internal server error" });
+	}
+};
+
+
+exports.GetTranscript = async (req, res) => {
+  const { callId } = req.params;
+  if (!callId) {
+    return res.status(400).json({ message: "Call ID is missing" });
+  }
   try {
-    const apiKey = process.env.BLAND_API_KEY; // Ensure your API key is stored securely
-    console.log("Fetching call logs with API Key:", apiKey); // Debug statement for logging
     const options = { method: "GET", headers: { authorization: apiKey } };
-
-    const response = await axios.get("https://api.bland.ai/v1/calls", options);
-
-    console.log("Received response from API:", response.status); // Debug statement for logging response status
+    const response = await axios.get(`https://api.bland.ai/v1/calls/${callId}`, options);
 
     if (response.status === 200) {
-      // Optionally, log the response data or part of it for debugging
-      console.log("Call logs data:", response.data); // Be mindful of logging sensitive information
-
-      // Directly pass the response data to the frontend
-      res.status(200).json(response.data);
+      console.log(response.data);
+      const transcripts = response.data.transcripts;
+      if (transcripts && transcripts.length > 0) {
+        const concatenatedTranscript = response.data.concatenated_transcript;
+        console.log("Transcripts:");
+        transcripts.forEach(transcript => {
+          console.log(transcript);
+        });
+        console.log("Concatenated Transcript:");
+        console.log(concatenatedTranscript);
+        return res.status(200).json({ transcripts, concatenatedTranscript });
+      } else {
+        console.log("Transcripts not found");
+        return res.status(404).json({ message: "Transcripts not found" });
+      }
     } else {
-      // Handle unexpected responses
-      res
-        .status(response.status)
-        .json({ message: "Failed to fetch call logs" });
+      console.error("Failed to fetch transcript");
+      return res.status(response.status).json({ message: "Failed to fetch transcript" });
     }
   } catch (error) {
-    console.error("Error fetching call logs:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error fetching transcript:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+
+
