@@ -16,10 +16,10 @@ import Checkbox from "@mui/material/Checkbox";
 import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 import LinearProgress from "@mui/joy/LinearProgress";
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
+	Accordion,
+	AccordionSummary,
+	AccordionDetails,
+	Typography,
 } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -27,20 +27,20 @@ import Avatar from "@mui/joy/Avatar";
 import AccordionGroup from "@mui/joy/AccordionGroup";
 import { REACT_APP_BACK_URL } from "../../config/config";
 import {
-  TextField,
-  TextareaAutosize,
-  Select,
-  MenuItem,
-  Button,
-  FormControl,
-  InputLabel,
-  Input,
-  FormHelperText,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
+	TextField,
+	TextareaAutosize,
+	Select,
+	MenuItem,
+	Button,
+	FormControl,
+	InputLabel,
+	Input,
+	FormHelperText,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 } from "@mui/material";
 import Papa from "papaparse";
 import Table from "@mui/material/Table";
@@ -52,185 +52,214 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
 export default function CallLog() {
-  const [callLog, setcallLog] = useState([]);
-  const admin = useSelector((state) => state.admin.admin);
-  const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(null);
-  const [transcriptDialogOpen, setTranscriptDialogOpen] = useState(false);
-  const [transcript, setTranscript] = useState("");
+	const [callLog, setcallLog] = useState([]);
+	const admin = useSelector((state) => state.admin.admin);
+	const [loading, setLoading] = useState(false);
+	const [alert, setAlert] = useState(null);
+	const [transcriptDialogOpen, setTranscriptDialogOpen] = useState(false);
+	const [transcript, setTranscript] = useState("");
+	const [summaryDialogOpen, setSummaryDialogOpen] = useState(false);
+	const [callSummary, setCallSummary] = useState("");
 
-  const handleTranscriptDialogOpen = () => {
-    setTranscriptDialogOpen(true);
-  };
+	const handleTranscriptDialogOpen = () => {
+		setTranscriptDialogOpen(true);
+	};
 
-  const handleTranscriptDialogClose = () => {
-    setTranscriptDialogOpen(false);
-  };
+	const handleTranscriptDialogClose = () => {
+		setTranscriptDialogOpen(false);
+	};
 
-  const handleViewTranscript = async (callId) => {
-    console.log(`Attempting to fetch transcript for call ID: ${callId}`); // Debug statement
-    try {
-      const response = await axios.get(
-        `${REACT_APP_BACK_URL}/admin/get-transcript/${callId}`, // Ensure this URL matches the endpoint exactly
-        {
-          headers: {
-            Authorization: `Bearer ${admin.token}`,
-          },
-        }
-      );
-      console.log("Transcript fetch response data:", response.data); // Debug statement
-      setTranscript(response.data.transcripts); // Adjust based on actual response structure
-      handleTranscriptDialogOpen();
-    } catch (error) {
-      console.log("Error fetching transcript:", error); // Debug statement
-      // Adjust error handling as necessary
-    }
-  };
+	const handleViewTranscript = async (callId) => {
+		console.log(`Attempting to fetch transcript for call ID: ${callId}`); // Debug statement
+		try {
+			const response = await axios.get(
+				`${REACT_APP_BACK_URL}/admin/get-transcript/${callId}`, // Ensure this URL matches the endpoint exactly
+				{
+					headers: {
+						Authorization: `Bearer ${admin.token}`,
+					},
+				}
+			);
+			console.log("Transcript fetch response data:", response.data); // Debug statement
+			setTranscript(response.data.transcripts); // Adjust based on actual response structure
+			handleTranscriptDialogOpen();
+		} catch (error) {
+			console.log("Error fetching transcript:", error); // Debug statement
+			// Adjust error handling as necessary
+		}
+	};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (admin.email.length > 0) {
-          setLoading(true);
-          const response = await axios.get(
-            `${REACT_APP_BACK_URL}/admin/call-logs`,
-            {
-              headers: {
-                Authorization: `Bearer ${admin.token}`,
-              },
-            }
-          );
-          console.log(response.data.calls);
-          setcallLog(response.data.calls);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-        if (error.response && error.response.status === 401) {
-          setLoading(false);
-          return navigate(`/`);
-        }
-        setAlert(
-          <Alert
-            style={{ position: "fixed", bottom: "3%", left: "2%", zIndex: 999 }}
-            variant="filled"
-            severity="error"
-          >
-            {error.response.data.error}
-          </Alert>
-        );
-        setTimeout(() => setAlert(null), 5000);
-        setLoading(false);
-      }
-    };
+	const handleViewSummary = async (transcripts) => {
+		console.log("Transcripts:", transcripts); // Log transcripts before making the API call
+		try {
+		  const response = await axios.post(`${REACT_APP_BACK_URL}/admin/generate-summary`, {
+			transcripts,
+		  }, {
+			headers: {
+			  Authorization: `Bearer ${admin.token}`,
+			},
+		  });
+		  setCallSummary(response.data.summary);
+		  setSummaryDialogOpen(true);
+		} catch (error) {
+		  console.error("Error fetching summary:", error.response || error);
+		}
+	};
+	
+	  
 
-    fetchData();
-  }, [admin]);
 
-  return (
-    <div id="CallLog" className="CallLog flex">
-      <Panel />
-      <Stack spacing={2}>{alert}</Stack>
-      <div className="flex flex-col gap-2 flex-1">
-        <div
-          className="flex h-24 w-full py-4 px-6 md:hidden"
-          style={{ borderBottom: "1px solid #B0BBC9" }}
-        >
-          <img
-            src="/public\Assets\Images\logo3.png"
-            className="object-contain"
-            alt=""
-          />
-        </div>
-        <div className="flex flex-col justify-center gap-8 w-3/4 md:w-11/12 md:items-center p-6">
-          <h1 className="CallLog-title">Call Log</h1>
-          {callLog && callLog.length > 0 ? (
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>To</TableCell>{" "}
-                    <TableCell align="right">Answered By</TableCell>
-                    <TableCell align="right">Call Length</TableCell>
-                    <TableCell align="right">Status</TableCell>
-                    <TableCell align="right">Call from</TableCell>
-                    <TableCell align="right">Call ID</TableCell>
-                    <TableCell align="right">Transcript</TableCell>
-                    <TableCell align="right">Summary</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {callLog.map((call) => (
-                    <TableRow
-                      key={call.name}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {call.to}
-                      </TableCell>
-                      <TableCell align="right">{call.answered_by}</TableCell>
-                      <TableCell align="right">{call.call_length}</TableCell>
-                      <TableCell align="right">{call.queue_status}</TableCell>
-                      <TableCell align="right">{call.from}</TableCell>
-                      <TableCell align="right">{call.call_id}</TableCell>
-                      <TableCell align="right">
-                        <Button
-                          variant="contained"
-                          onClick={() => handleViewTranscript(call.call_id)}
-                        >
-                          View Transcript
-                        </Button>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Button
-                          variant="contained"
-                          onClick={() => handleViewSummary(call.call_id)}
-                        >
-                          View Summary
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Spinnerf />
-          )}
-        </div>
-      </div>
-      <Dialog
-        open={transcriptDialogOpen}
-        onClose={handleTranscriptDialogClose}
-        aria-labelledby="transcript-dialog-title"
-        aria-describedby="transcript-dialog-description"
-      >
-        <DialogTitle id="transcript-dialog-title">Transcript</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="transcript-dialog-description">
-            {transcript && Array.isArray(transcript) ? (
-              transcript.map((item, index) => (
-                <div key={index}>
-                  <strong>
-                    {item.user === "user" ? "User: " : "Assistant: "}
-                  </strong>
-                  {item.text}
-                </div>
-              ))
-            ) : (
-              <div>
-                <strong>
-                  {transcript.user === "user" ? "User: " : "Assistant: "}
-                </strong>
-                {transcript.text}
-              </div>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleTranscriptDialogClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				if (admin.email.length > 0) {
+					setLoading(true);
+					const response = await axios.get(
+						`${REACT_APP_BACK_URL}/admin/call-logs`,
+						{
+							headers: {
+								Authorization: `Bearer ${admin.token}`,
+							},
+						}
+					);
+					console.log(response.data.calls);
+					setcallLog(response.data.calls);
+					setLoading(false);
+				}
+			} catch (error) {
+				console.log(error);
+				if (error.response && error.response.status === 401) {
+					setLoading(false);
+					return navigate(`/`);
+				}
+				setAlert(
+					<Alert
+						style={{ position: "fixed", bottom: "3%", left: "2%", zIndex: 999 }}
+						variant="filled"
+						severity="error"
+					>
+						{error.response.data.error}
+					</Alert>
+				);
+				setTimeout(() => setAlert(null), 5000);
+				setLoading(false);
+			}
+		};
+
+		fetchData();
+	}, [admin]);
+
+	return (
+		<div id="CallLog" className="CallLog flex">
+			<Panel />
+			<Stack spacing={2}>{alert}</Stack>
+			<div className="flex flex-col gap-2 flex-1">
+				<div
+					className="flex h-24 w-full py-4 px-6 md:hidden"
+					style={{ borderBottom: "1px solid #B0BBC9" }}
+				>
+					<img
+						src="/public\Assets\Images\logo3.png"
+						className="object-contain"
+						alt=""
+					/>
+				</div>
+				<div className="flex flex-col justify-center gap-8 w-3/4 md:w-11/12 md:items-center p-6">
+					<h1 className="CallLog-title">Call Log</h1>
+					{callLog && callLog.length > 0 ? (
+						<TableContainer component={Paper}>
+							<Table sx={{ minWidth: 650 }} aria-label="simple table">
+								<TableHead>
+									<TableRow>
+										<TableCell>To</TableCell>{" "}
+										<TableCell align="right">Answered By</TableCell>
+										<TableCell align="right">Call Length</TableCell>
+										<TableCell align="right">Status</TableCell>
+										<TableCell align="right">Call from</TableCell>
+										<TableCell align="right">Call ID</TableCell>
+										<TableCell align="right">Transcript</TableCell>
+										<TableCell align="right">Summary</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{callLog.map((call) => (
+										<TableRow
+											key={call.name}
+											sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+										>
+											<TableCell component="th" scope="row">
+												{call.to}
+											</TableCell>
+											<TableCell align="right">{call.answered_by}</TableCell>
+											<TableCell align="right">{call.call_length}</TableCell>
+											<TableCell align="right">{call.queue_status}</TableCell>
+											<TableCell align="right">{call.from}</TableCell>
+											<TableCell align="right">{call.call_id}</TableCell>
+											<TableCell align="right">
+												<Button
+													variant="contained"
+													onClick={() => handleViewTranscript(call.call_id)}
+												>
+													View Transcript
+												</Button>
+											</TableCell>
+											<TableCell align="right">
+												<Button onClick={() => handleViewSummary(transcript)}>View Summary</Button>
+
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					) : (
+						<Spinnerf />
+					)}
+				</div>
+			</div>
+			<Dialog
+				open={transcriptDialogOpen}
+				onClose={handleTranscriptDialogClose}
+				aria-labelledby="transcript-dialog-title"
+				aria-describedby="transcript-dialog-description"
+			>
+				<DialogTitle id="transcript-dialog-title">Transcript</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="transcript-dialog-description">
+						{transcript && Array.isArray(transcript) ? (
+							transcript.map((item, index) => (
+								<div key={index}>
+									<strong>
+										{item.user === "user" ? "User: " : "Assistant: "}
+									</strong>
+									{item.text}
+								</div>
+							))
+						) : (
+							<div>
+								<strong>
+									{transcript.user === "user" ? "User: " : "Assistant: "}
+								</strong>
+								{transcript.text}
+							</div>
+						)}
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleTranscriptDialogClose}>Close</Button>
+				</DialogActions>
+			</Dialog>
+			<Dialog open={summaryDialogOpen} onClose={() => setSummaryDialogOpen(false)}>
+				<DialogTitle>Call Summary</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						{callSummary || "No summary available."}
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setSummaryDialogOpen(false)}>Close</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
 }

@@ -8,6 +8,7 @@ const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
+const openai = require('openai');
 const moment = require("moment");
 const { sendErrorEmail } = require("../utils/Errormail");
 const uuid = require("uuid");
@@ -22,6 +23,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const apiKey = process.env.BLAND_API_KEY;
+const { Configuration, OpenAIApi } = require("openai");
+
 
 exports.AdminLogin = async (req, res, next) => {
   const { email, password } = req.body;
@@ -270,6 +273,46 @@ exports.GetTranscript = async (req, res) => {
   }
 };
 
+
+
+exports.GenerateSummaryFromTranscripts = async (req, res) => {
+  console.log("GenerateSummaryFromTranscripts called"); // Log entry
+  const { transcripts } = req.body;
+
+  if (!transcripts || transcripts.length === 0) {
+    console.log("No transcripts provided"); // Log error
+    return res.status(400).json({ message: "No transcripts provided" });
+  }
+
+  // Assuming transcripts is a string or an array of strings
+  const transcriptText = Array.isArray(transcripts) ? transcripts.join(" ") : transcripts;
+  console.log("Transcript text:", transcriptText); // Log the transcript text
+
+  try {
+    const openai = new OpenAIApi(new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,
+    }));
+    console.log("OpenAI API Key:", process.env.OPENAI_API_KEY); // Log the API Key (Be cautious with logging sensitive info)
+
+    const response = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: `Summarize this conversation: ${transcriptText}`,
+      temperature: 0.5,
+      max_tokens: 200,
+      top_p: 1.0,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+    });
+
+    console.log("OpenAI response:", response); // Log the OpenAI response
+    const summary = response.data.choices[0].text.trim();
+
+    return res.status(200).json({ summary });
+  } catch (error) {
+    console.error("Error generating summary:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
 
 
 
