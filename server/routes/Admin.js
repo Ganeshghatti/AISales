@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { AdminLogin, GetAllVoices, SingleCall, BulkCall, GetCallLogs, GetTranscript, GenerateSummaryFromTranscripts} = require("../Controller/Admin");
+const { AdminLogin, GetAllVoices, SingleCall, BulkCall, GetCallLogs, GetTranscript, GetSummary} = require("../Controller/Admin");
 const requireAuth = require("../middleware/Admin");
 
 // Existing routes
@@ -10,7 +10,6 @@ router.route("/admin/single-call").post(requireAuth, SingleCall);
 router.route("/admin/bulk-call").post(requireAuth, BulkCall);
 router.route("/admin/call-logs").get(requireAuth, GetCallLogs);
 router.route("/admin/get-transcript/:callId").get(requireAuth, GetTranscript);
-// Adjust the path and method according to your project structure
-router.post("/admin/generate-summary", requireAuth, GenerateSummaryFromTranscripts);
+router.route("/admin/get-summary/:callId").get(requireAuth, GetSummary);
 
 module.exports = router;
