@@ -58,8 +58,9 @@ export default function CallLog() {
 	const [alert, setAlert] = useState(null);
 	const [transcriptDialogOpen, setTranscriptDialogOpen] = useState(false);
 	const [transcript, setTranscript] = useState("");
-	const [summaryDialogOpen, setSummaryDialogOpen] = useState(false);
-	const [callSummary, setCallSummary] = useState("");
+    const [summaryDialogOpen, setSummaryDialogOpen] = useState(false); // State to manage dialog visibility
+    const [callSummary, setCallSummary] = useState(""); // State to store summary data
+
 
 	const handleTranscriptDialogOpen = () => {
 		setTranscriptDialogOpen(true);
@@ -89,24 +90,34 @@ export default function CallLog() {
 		}
 	};
 
-	const handleViewSummary = async (transcripts) => {
-		console.log("Transcripts:", transcripts); // Log transcripts before making the API call
-		try {
-		  const response = await axios.post(`${REACT_APP_BACK_URL}/admin/generate-summary`, {
-			transcripts,
-		  }, {
-			headers: {
-			  Authorization: `Bearer ${admin.token}`,
-			},
-		  });
-		  setCallSummary(response.data.summary);
-		  setSummaryDialogOpen(true);
-		} catch (error) {
-		  console.error("Error fetching summary:", error.response || error);
-		}
-	};
-	
-	  
+    // Function to open the summary dialog
+    const handleSummaryDialogOpen = () => {
+        setSummaryDialogOpen(true);
+    };
+
+    // Function to close the summary dialog
+    const handleSummaryDialogClose = () => {
+        setSummaryDialogOpen(false);
+    };
+
+    // Function to fetch and display the call summary
+    const handleViewSummary = async (callId) => {
+        try {
+            const response = await axios.get(`${REACT_APP_BACK_URL}/admin/get-summary/${callId}`, {
+                headers: {
+                    Authorization: `Bearer ${admin.token}`,
+                },
+            });
+            setCallSummary(response.data.summaryResponse.choices[0].message.content); // Adjust depending on your API response structure
+            handleSummaryDialogOpen();
+        } catch (error) {
+            console.log("Error fetching summary:", error);
+            // Handle error (e.g., set an error alert state here)
+        }
+    };
+
+
+
 
 
 	useEffect(() => {
@@ -204,8 +215,12 @@ export default function CallLog() {
 												</Button>
 											</TableCell>
 											<TableCell align="right">
-												<Button onClick={() => handleViewSummary(transcript)}>View Summary</Button>
-
+												<Button
+													variant="contained"
+													onClick={() => handleViewSummary(call.call_id)}
+												>
+													View Summary
+												</Button>
 											</TableCell>
 										</TableRow>
 									))}
@@ -249,17 +264,22 @@ export default function CallLog() {
 					<Button onClick={handleTranscriptDialogClose}>Close</Button>
 				</DialogActions>
 			</Dialog>
-			<Dialog open={summaryDialogOpen} onClose={() => setSummaryDialogOpen(false)}>
-				<DialogTitle>Call Summary</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						{callSummary || "No summary available."}
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={() => setSummaryDialogOpen(false)}>Close</Button>
-				</DialogActions>
-			</Dialog>
+			<Dialog
+                open={summaryDialogOpen}
+                onClose={handleSummaryDialogClose}
+                aria-labelledby="summary-dialog-title"
+                aria-describedby="summary-dialog-description"
+            >
+                <DialogTitle id="summary-dialog-title">Call Summary</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="summary-dialog-description">
+                        {callSummary}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSummaryDialogClose}>Close</Button>
+                </DialogActions>
+            </Dialog>
 		</div>
 	);
 }
